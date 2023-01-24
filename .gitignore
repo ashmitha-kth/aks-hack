@@ -349,3 +349,5 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 notes.txt
+private-cluster/workloadidentity/src/WorkloadIdentity/appsettings.Development.json
+private-cluster/workloadidentity/wli-dev.yaml

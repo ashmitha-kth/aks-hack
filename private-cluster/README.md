@@ -73,7 +73,7 @@ Make sure the following parameters are set in the main.bicep file.
 
 ```shell
 param deployInit bool = true
-param deployAzServices bool = false
+param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
 ```
@@ -139,7 +139,7 @@ az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p r
 Login to the VM in Azure, open a terminal and run the following commands. 
 ```shell
 az login -t [your tenantId]
-az aks get-credentials --resource-group [rg-resourcename] --name aks-[resourcename]-dev
+az aks get-credentials --resource-group [rg-resourcename] --name aks-[resourcename]-dev --admin
 ```
 Validate access
 ```shell
@@ -232,3 +232,31 @@ kubectl apply -f .\busybox.yaml
 
 
 Learn more about AKS policies https://learn.microsoft.com/en-us/azure/aks/policy-reference
+
+## Step 11 - Use workload identity in AKS
+
+Use the VM that was created in Azure. 
+Use a terminal and navigate to aks-hack/private-cluster/workloadidentity
+Run the following command to create a new User Assigned Identity that will be used as a workload identity. https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview
+
+It also adds a secret to the Keyvault that was created earlier and creates a roleassignment for the new User Assigned Identity. 
+
+```shell
+az deployment group create -g rg-[resourcename] -f workloadidentity.bicep -p resourcename=[resourcename] location=westeurope
+```
+
+Push the code to Azure Container Registry and build a docker image. 
+Navigate to aks-hack/private-cluster/workloadidentity/src and run the following commands. 
+
+```shell
+az acr build --registry acr[resourcename]dev --image wli/wli-api:v1 .
+```
+
+Open wli.yaml in notepad on the VM. Replace [resourcename] with your resourcename (4 places).
+Get the ClientID of the newly created User Assigned Identity and replace [CLIENTID of User Assigned Identity used for workloadidentity] (2 places). 
+Run the following commands.    
+
+```shell
+kubectl create ns wli
+kubectl apply -f .\wli.yaml -n wli
+```

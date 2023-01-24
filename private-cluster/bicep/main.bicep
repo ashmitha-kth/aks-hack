@@ -2,6 +2,8 @@
 param resourcename string
 param admingroupobjectid string = ''
 param allowedhostIp string = ''
+param sqlAdminAADUser string = ''
+param sqlAdminSid string = ''
 @secure()
 param vmpwd string = ''
 param location string = resourceGroup().location
@@ -18,7 +20,7 @@ param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
 param deployPe bool = false
-param deployAzSql bool = false
+param deployAzSql bool = true
 
 
 
@@ -277,3 +279,4 @@ module sql 'azsql.bicep' = if(deployAzSql){
     sqlpwd: '${vmpwd}12345'
   }
 }
+

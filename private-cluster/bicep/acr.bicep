@@ -14,7 +14,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
     name:'Premium'
   }
   properties: {
-    publicNetworkAccess: 'Disabled'
+    //publicNetworkAccess: 'Disabled'
     adminUserEnabled: false
     networkRuleBypassOptions: 'AzureServices'
     networkRuleSet: {

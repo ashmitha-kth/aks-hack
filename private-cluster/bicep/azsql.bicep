@@ -11,6 +11,7 @@ resource sqlsrv 'Microsoft.Sql/servers@2021-08-01-preview' = {
     administratorLogin: 'sqleverestadmin'
     administratorLoginPassword: sqlpwd
     publicNetworkAccess: 'Enabled'
+    
   }
 
 }
