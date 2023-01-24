@@ -14,7 +14,6 @@ param env string = 'dev'
 
 
 // Step-by-step params
-param deployInit bool = true
 param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
@@ -36,7 +35,7 @@ module umi 'umi.bicep' = {
   }
 }
 
-module aksprivateDnsZone 'privatednszone.bicep' = if(deployInit) {
+module aksprivateDnsZone 'privatednszone.bicep' = if(deployAzServices) {
   name: 'privateDnsZoneDeploy'
   params: {
     privateDnsZoneName: '${name}.privatelink.${toLower(location)}.azmk8s.io'
@@ -48,7 +47,7 @@ module aksprivateDnsZone 'privatednszone.bicep' = if(deployInit) {
   ]
 }
 
-module storage 'storageaccount.bicep' = if(deployInit) {
+module storage 'storageaccount.bicep' = if(deployAzServices) {
   name: 'stgDeploy'
   params: {
     location: location
@@ -59,7 +58,7 @@ module storage 'storageaccount.bicep' = if(deployInit) {
   ]
 }
 
-module vnet 'vnet.bicep' = if(deployInit){
+module vnet 'vnet.bicep' = if(deployAzServices){
   name: 'vnetDeploy'
   params: {
     addressprefix: '10.0.0.0/21'
