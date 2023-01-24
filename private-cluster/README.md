@@ -187,7 +187,7 @@ cd .\temp
 ```
 Clone your repo. 
 ```shell
-git clone git clone https://github.com/[your github account]/aks-hack.git
+git clone https://github.com/[your github account]/aks-hack.git
 ```
 Goto the Azure portal and copy the instrumentation key for Application Insights. 
 Open the file aks-hack/private-cluster/sample/distributed-calculator/deploy/open-telemetry-collector-appinsights.yaml
@@ -245,13 +245,28 @@ It also adds a secret to the Keyvault that was created earlier and creates a rol
 az deployment group create -g rg-[resourcename] -f workloadidentity.bicep -p resourcename=[resourcename] location=westeurope
 ```
 
-Push the code to Azure Container Registry and build a docker image. 
-Navigate to aks-hack/private-cluster/workloadidentity/src and run the following commands. 
+
+### Step 11.1 Grant Access to the User Assigned Identity 
+Use the Azure portal and set you as the Azure Active Directory Admin for your Azure Sql Server. 
+Go to the resource sqlsrv-[resourcename]-dev --> Settings --> Azure Active Directory
+
+Then use the Query editor in the portal under the following resource, db-[resourcename]-dev to grant access for you UMI in the database. Enable your IP in the SQL ACL list and then connect to the database and run the following commands.  
 
 ```shell
+CREATE USER [umi-wli-[resourcename]-dev] FROM EXTERNAL PROVIDER
+ALTER ROLE db_owner ADD MEMBER [umi-wli-[resourcename]-dev]
+```
+
+### Step 11.2 Push the code to ACR 
+Push the code to Azure Container Registry and build a docker image. 
+Navigate to aks-hack/private-cluster/workloadidentity/src/workloadidentity and run the following commands. 
+
+```shell
+az login -t [tenantid]
 az acr build --registry acr[resourcename]dev --image wli/wli-api:v1 .
 ```
 
+### Step 11.3 Deploy the workload
 Open wli.yaml in notepad on the VM. Replace [resourcename] with your resourcename (4 places).
 Get the ClientID of the newly created User Assigned Identity and replace [CLIENTID of User Assigned Identity used for workloadidentity] (2 places). 
 Run the following commands.    
@@ -260,3 +275,7 @@ Run the following commands.
 kubectl create ns wli
 kubectl apply -f .\wli.yaml -n wli
 ```
+
+Validate the functionality by using a browser and go to these url's from your Azure VM.   
+- http://10.0.3.7/workloadidentity/getsecret
+- http://10.0.3.7/workloadidentity/getdata

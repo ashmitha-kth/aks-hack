@@ -30,7 +30,7 @@ spec:
       serviceAccountName: sa-wli
       containers:
       - name: wli-api
-        image: acr[resourcename]dev.azurecr.io/wli/wliapi:v1
+        image: acr[resourcename]dev.azurecr.io/wli/wli-api:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 80
