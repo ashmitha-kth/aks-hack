@@ -61,7 +61,7 @@ az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkl
 Choose a resourcename of six letters e.g "majnor" that will be used to create a unique environment. That will also be a part of the naming convention to be used. 
 Create resourcegroup
 ```shell 
-az group create -l westeurope -n [rg-resourcename]
+az group create -l westeurope -n rg-[resourcename]
 ```
 Verify that it has been created in the portal. 
 
@@ -72,14 +72,13 @@ Open aks-hack/private-cluster/bicep folder in VS Code.
 Make sure the following parameters are set in the main.bicep file. 
 
 ```shell
-param deployInit bool = true
 param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
 ```
 Run the following command. 
 ```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename]
+az deployment group create -g rg-[resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename]
 ```
 Verify the deployment in the portal.
 
@@ -105,7 +104,7 @@ This should be a valid objectId of a group in AAD that will have cluster role ad
 
 Run the following command. 
 ```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group]
+az deployment group create -g rg-[resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group]
 ```
 Verify the deployment in the portal.
 
@@ -121,7 +120,7 @@ param deployVm bool = true
 ```
 Identify your IP address and add the following parameters to your Azure CLI command. 
 ```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group] allowedhostIp=[your IP address] vmpwd=[Set a pwd of 8 chars]
+az deployment group create -g rg-[resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group] allowedhostIp=[your IP address] vmpwd=[Set a pwd of 8 chars]
 ```
 
 ## Step 6 - Get access to AKS
@@ -129,7 +128,7 @@ az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p r
 Login to the VM in Azure, open a terminal and run the following commands. 
 ```shell
 az login -t [your tenantId]
-az aks get-credentials --resource-group [rg-resourcename] --name aks-[resourcename]-dev --admin
+az aks get-credentials --resource-group rg-[resourcename] --name aks-[resourcename]-dev --admin
 ```
 Validate access
 ```shell
@@ -153,7 +152,6 @@ Done.
 
 Change the following parameters in main.bicep
 ```shell
-param deployInit bool = true
 param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
@@ -162,7 +160,7 @@ param deployPe bool = true
 ```
 This will disable AKS and VM deployment (to save time) and enable deployment of private endpoints for AKV and ACR. Run the following command. 
 ```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename]
+az deployment group create -g rg-[resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename]
 ```
 Verify the deployment in the portal.
 
