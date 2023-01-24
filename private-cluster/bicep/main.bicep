@@ -20,7 +20,7 @@ param deployAzServices bool = true
 param deployAks bool = false
 param deployVm bool = false
 param deployPe bool = false
-param deployAzSql bool = true
+
 
 
 
@@ -271,7 +271,7 @@ module peStg 'privateendpoint.bicep' = if(deployPe) {
   ]
 }
 
-module sql 'azsql.bicep' = if(deployAzSql){
+module sql 'azsql.bicep' = if(deployVm){
   name: 'sqlDeploy'
   params: {
     location: location

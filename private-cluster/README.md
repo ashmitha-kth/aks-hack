@@ -83,29 +83,19 @@ az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p r
 ```
 Verify the deployment in the portal.
 
-## Step 4 - Deploy supporting Azure services
-
-Change the following parameter to "true" in main.bicep
-```shell
-param deployAzServices bool = true
-```
-Run the following command. 
-```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename]
-```
-Verify the deployment in the portal.
-
-## Step 5 - Deploy AKS
+## Step 4 - Deploy AKS
 
 Run the following Azure CLI commands. This is the second step in registering new features that we did in step 1.  
 ```shell
 az provider register --namespace microsoft.compute
 az provider register --namespace Microsoft.ContainerService
 ```
+
 Change the following parameter to "true" in main.bicep
 ```shell
-param deployAzServices bool = true
+param deployAks bool = true
 ```
+
 Add the following parameter in the Azure CLI command. 
 ```shell
 admingroupobjectid=[objectId of AAD group]
@@ -119,7 +109,7 @@ az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p r
 ```
 Verify the deployment in the portal.
 
-## Step 6 - Upload file to storage and deploy deploy VM
+## Step 5 - Upload file to storage and deploy deploy VM
 
 Upload the file "setup.ps1" to your storageaccount. Run the following command. 
 ```shell
@@ -131,10 +121,10 @@ param deployVm bool = true
 ```
 Identify your IP address and add the following parameters to your Azure CLI command. 
 ```shell
-az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group] allowedhostIp=[your IP address] vmpwd=[Set a pwd of 8 chars vm]
+az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p resourcename=[resourcename] admingroupobjectid=[objectId of AAD group] allowedhostIp=[your IP address] vmpwd=[Set a pwd of 8 chars]
 ```
 
-## Step 7 - Get access to AKS
+## Step 6 - Get access to AKS
 
 Login to the VM in Azure, open a terminal and run the following commands. 
 ```shell
@@ -159,7 +149,7 @@ Validate by running "k get pods" in a terminal.
 Done.
 
 
-## Step 8 - Deploy private endpoints
+## Step 7 - Deploy private endpoints
 
 Change the following parameters in main.bicep
 ```shell
@@ -176,7 +166,7 @@ az deployment group create -g [rg-resourcename] -n mainDeploy -f main.bicep -p r
 ```
 Verify the deployment in the portal.
 
-## Step 9 - Deploy AKS workload
+## Step 8 - Deploy AKS workload
 
 Login to the VM.
 Create a folder under c:\ called "temp"
@@ -208,7 +198,7 @@ Run "kubectl get svc -n sample" to get the external IP and use a browser to acce
 Use all the calculator methods and look in Application insights to view the telemetry. 
 
 
-## Step 10 - Use Policies in AKS
+## Step 9 - Use Policies in AKS
 
 Navigate to aks-hack/private-cluster/policy on the VM. Deploy the policy initiative. 
 
@@ -233,7 +223,7 @@ kubectl apply -f .\busybox.yaml
 
 Learn more about AKS policies https://learn.microsoft.com/en-us/azure/aks/policy-reference
 
-## Step 11 - Use workload identity in AKS
+## Step 10 - Use workload identity in AKS
 
 Use the VM that was created in Azure. 
 Use a terminal and navigate to aks-hack/private-cluster/workloadidentity
@@ -246,7 +236,7 @@ az deployment group create -g rg-[resourcename] -f workloadidentity.bicep -p res
 ```
 
 
-### Step 11.1 Grant Access to the User Assigned Identity 
+### Step 10.1 Grant Access to the User Assigned Identity 
 Use the Azure portal and set you as the Azure Active Directory Admin for your Azure Sql Server. 
 Go to the resource sqlsrv-[resourcename]-dev --> Settings --> Azure Active Directory
 
@@ -257,7 +247,7 @@ CREATE USER [umi-wli-[resourcename]-dev] FROM EXTERNAL PROVIDER
 ALTER ROLE db_owner ADD MEMBER [umi-wli-[resourcename]-dev]
 ```
 
-### Step 11.2 Push the code to ACR 
+### Step 10.2 Push the code to ACR 
 Push the code to Azure Container Registry and build a docker image. 
 Navigate to aks-hack/private-cluster/workloadidentity/src/workloadidentity and run the following commands. 
 
@@ -266,7 +256,7 @@ az login -t [tenantid]
 az acr build --registry acr[resourcename]dev --image wli/wli-api:v1 .
 ```
 
-### Step 11.3 Deploy the workload
+### Step 10.3 Deploy the workload
 Open wli.yaml in notepad on the VM. Replace [resourcename] with your resourcename (4 places).
 Get the ClientID of the newly created User Assigned Identity and replace [CLIENTID of User Assigned Identity used for workloadidentity] (2 places). 
 Run the following commands.    
